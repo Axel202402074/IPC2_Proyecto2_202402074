@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<configuracion>
+  <listaInvernaderos>
+    <invernadero nombre="Invernadero Prueba">
+      <numeroHileras>2</numeroHileras>
+      <plantasXhilera>2</plantasXhilera>
+      <listaPlantas>
+        <planta hilera="1" posicion="1" litrosAgua="1" gramosFertilizante="100">Ciprés</planta>
+        <planta hilera="1" posicion="2" litrosAgua="1" gramosFertilizante="100">Ciprés Italiano</planta>
+        <planta hilera="2" posicion="1" litrosAgua="1" gramosFertilizante="100">Pino</planta>
+        <planta hilera="2" posicion="2" litrosAgua="1" gramosFertilizante="100">Pino Ocote</planta>
+      </listaPlantas>
+      <asignacionDrones>
+        <dron id="1" hilera="1"/>
+        <dron id="2" hilera="2"/>
+      </asignacionDrones>
+      <planesRiego>
+        <plan nombre="Semana 1">H1-P1, H2-P1, H1-P2, H2-P2</plan>
+      </planesRiego>
+    </invernadero>
+  </listaInvernaderos>
+</configuracion>
