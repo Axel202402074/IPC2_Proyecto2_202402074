@@ -1,24 +1,20 @@
 from graphviz import Digraph
 
 def graficar_lista(lista, nombre_archivo="lista", titulo="Lista Simple Enlazada"):
-    """
-    Genera un gráfico de una lista simple enlazada usando Graphviz.
-    
-    Args:
-        lista: Objeto ListaSimpleEnlazada a graficar
-        nombre_archivo: Nombre base del archivo (sin extensión)
-        titulo: Título del gráfico
-    """
     dot = Digraph(comment=titulo)
-    dot.attr(rankdir="LR", size="10,5")
-    dot.attr('node', shape='box', style='rounded,filled', fillcolor='lightblue')
+    
+    num_elementos = lista.longitud
+    ancho = max(12, num_elementos * 2)
+    
+    dot.attr(rankdir="LR", size=f"{ancho},8")
+    dot.attr('node', shape='box', style='rounded,filled', fillcolor='lightblue', 
+            fontsize='12', width='1.5', height='0.8')
     
     actual = lista.primero
     idx = 0
     
     while actual:
         nodo_name = f"n{idx}"
-        # Convertir el dato a string de forma segura
         dato_str = str(actual.dato)
         dot.node(nodo_name, dato_str)
         
@@ -28,23 +24,27 @@ def graficar_lista(lista, nombre_archivo="lista", titulo="Lista Simple Enlazada"
         actual = actual.siguiente
         idx += 1
     
-    # Renderizar y generar el archivo
-    dot.render(nombre_archivo, format="png", cleanup=True)
-    print(f" Gráfico generado: {nombre_archivo}.png")
+    dot.render(nombre_archivo, format="png", cleanup=True, dpi='300')
+    print(f"Grafico generado: {nombre_archivo}.png")
 
 
 def graficar_instrucciones(plan, tiempo_max, nombre_archivo="cola_instrucciones"):
-    """
-    Genera un gráfico de las instrucciones de un plan hasta un tiempo máximo.
+    # Contar instrucciones 
+    actual = plan.secuencia.primero
+    contador_previo = 0
+    while actual:
+        if actual.dato.tiempo <= tiempo_max:
+            contador_previo += 1
+        actual = actual.siguiente
+        
+    ancho = max(15, contador_previo * 2.5)
+    alto = max(8, contador_previo * 0.3)
     
-    Args:
-        plan: Objeto Plan_Riego con las instrucciones
-        tiempo_max: Tiempo máximo en segundos a incluir
-        nombre_archivo: Nombre base del archivo (sin extensión)
-    """
     dot = Digraph(comment=f"Instrucciones hasta {tiempo_max}s")
-    dot.attr(rankdir="LR", size="12,6")
-    dot.attr('node', shape='box', style='filled')
+    dot.attr(rankdir="LR", size=f"{ancho},{alto}")
+    dot.attr('node', shape='box', style='filled', fontsize='11', 
+            width='2', height='1')
+    dot.attr('graph', dpi='300', nodesep='0.5', ranksep='1')
     
     actual = plan.secuencia.primero
     idx = 0
@@ -54,39 +54,36 @@ def graficar_instrucciones(plan, tiempo_max, nombre_archivo="cola_instrucciones"
     while actual:
         instr = actual.dato
         
-        # Solo incluir instrucciones dentro del tiempo máximo
         if instr.tiempo <= tiempo_max:
             nodo_name = f"n{idx}"
             
-            # Crear etiqueta con información de la instrucción
-            etiqueta = f" {instr.tiempo}s\\n {instr.dron}\\n"
+            etiqueta = f"T:{instr.tiempo}s\\n{instr.dron}\\n"
             
-            # Determinar color según la acción
             accion_lower = instr.accion.lower()
             if "regar" in accion_lower:
                 color = "lightblue"
-                etiqueta += " Regar"
+                etiqueta += "Regar"
             elif "fertilizar" in accion_lower:
                 color = "lightgreen"
-                etiqueta += " Fertilizar"
+                etiqueta += "Fertilizar"
             elif "adelante" in accion_lower or "mover" in accion_lower:
                 color = "lightyellow"
-                etiqueta += f" {instr.accion}"
-            elif "girar" in accion_lower or "rotar" in accion_lower:
+                etiqueta += f"{instr.accion}"
+            elif "atras" in accion_lower:
                 color = "lightcoral"
-                etiqueta += f" {instr.accion}"
-            else:
+                etiqueta += f"{instr.accion}"
+            elif "esperar" in accion_lower:
                 color = "lightgray"
+                etiqueta += "Esperar"
+            else:
+                color = "white"
                 etiqueta += instr.accion
             
-            # Agregar información de planta si existe
             if instr.planta:
-                etiqueta += f"\\n {instr.planta}"
+                etiqueta += f"\\n{instr.planta}"
             
-            # Crear nodo
             dot.node(nodo_name, etiqueta, fillcolor=color)
             
-            # Crear arista con el nodo anterior
             if ultimo_nodo is not None:
                 dot.edge(ultimo_nodo, nodo_name)
             
@@ -96,26 +93,22 @@ def graficar_instrucciones(plan, tiempo_max, nombre_archivo="cola_instrucciones"
         
         actual = actual.siguiente
     
-    # Renderizar y generar el archivo
     if contador > 0:
         dot.render(nombre_archivo, format="png", cleanup=True)
-        print(f" Gráfico generado: {nombre_archivo}.png (Total: {contador} instrucciones)")
+        print(f"Grafico generado: {nombre_archivo}.png (Total: {contador} instrucciones)")
     else:
-        print(f" No hay instrucciones dentro del tiempo máximo de {tiempo_max}s")
+        print(f"No hay instrucciones dentro del tiempo maximo de {tiempo_max}s")
 
 
 def graficar_cola(cola, nombre_archivo="cola", titulo="Cola"):
-    """
-    Genera un gráfico de una cola usando Graphviz.
+    num_elementos = cola.longitud
+    ancho = max(12, num_elementos * 2)
     
-    Args:
-        cola: Objeto Cola a graficar
-        nombre_archivo: Nombre base del archivo (sin extensión)
-        titulo: Título del gráfico
-    """
     dot = Digraph(comment=titulo)
-    dot.attr(rankdir="LR", size="10,5")
-    dot.attr('node', shape='box', style='rounded,filled', fillcolor='lightyellow')
+    dot.attr(rankdir="LR", size=f"{ancho},8")
+    dot.attr('node', shape='box', style='rounded,filled', fillcolor='lightyellow',
+            fontsize='12', width='1.5', height='0.8')
+    dot.attr('graph', dpi='300')
     
     actual = cola.frente
     idx = 0
@@ -131,6 +124,5 @@ def graficar_cola(cola, nombre_archivo="cola", titulo="Cola"):
         actual = actual.siguiente
         idx += 1
     
-    # Renderizar y generar el archivo
     dot.render(nombre_archivo, format="png", cleanup=True)
-    print(f" Gráfico generado: {nombre_archivo}.png")
+    print(f"Grafico generado: {nombre_archivo}.png")

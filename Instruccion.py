@@ -3,7 +3,7 @@ class Instruccion:
         self.tiempo = tiempo
         self.dron = dron
         self.accion = accion
-        self.planta = planta  # Puede ser None si no aplica
+        self.planta = planta  
 
     def __str__(self):
         if self.planta:

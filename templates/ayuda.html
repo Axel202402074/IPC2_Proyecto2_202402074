@@ -1,43 +1,67 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-    <title>Ayuda - Sistema de Invernaderos</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ayuda</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
-    <h1>Ayuda / Información del Proyecto</h1>
+    <div class="container">
+        <h1>Ayuda e Informacion</h1>
+        <nav>
+            <a href="/">Volver</a>
+        </nav>
 
-    <h2>Datos del Estudiante</h2>
-    <ul>
-        <li><b>Nombre:</b> Axel David González Molina</li>
-        <li><b>Carnet:</b> 202402074</li>
-        <li><b>Curso:</b> Introducción a la Programación y Computación 2</li>
-        <li><b>Sección:</b> "C" </li>
-        <li><b>Ciclo:</b> Primer Semestre 2025</li>
-    </ul>
+        <div class="section">
+            <h2>Datos del Estudiante</h2>
+            <table>
+                <tr>
+                    <th>Campo</th>
+                    <th>Informacion</th>
+                </tr>
+                <tr>
+                    <td>Nombre</td>
+                    <td>Axel David Gonzalez Molina</td>
+                </tr>
+                <tr>
+                    <td>Carnet</td>
+                    <td>202402074</td>
+                </tr>
+                <tr>
+                    <td>Curso</td>
+                    <td>Introduccion a la Programacion y Computacion 2</td>
+                </tr>
+                <tr>
+                    <td>Seccion</td>
+                    <td>C</td>
+                </tr>
+                <tr>
+                    <td>Semestre</td>
+                    <td>Segundo Semestre 2025</td>
+                </tr>
+            </table>
+        </div>
 
-    <h2>Descripción del Sistema</h2>
-    <p>
-        Este sistema permite gestionar un invernadero automatizado. 
-        Se cargan configuraciones desde un archivo XML de entrada que 
-        define invernaderos, hileras de plantas, drones y planes de riego.
-        A partir de estos datos, el sistema genera:
-    </p>
-    <ul>
-        <li>Archivo XML de salida con métricas de riego.</li>
-        <li>Reporte HTML con la información de los invernaderos.</li>
-        <li>Gráficas con Graphviz mostrando el estado de los TDAs en un tiempo dado.</li>
-    </ul>
+        <div class="section">
+            <h2>Acerca del Sistema</h2>
+            <p>
+                Sistema de gestion automatizada para invernaderos con drones de riego.
+                Procesa planes de riego, genera instrucciones optimizadas y produce reportes.
+            </p>
+        </div>
 
-    <h2>Estructuras de Datos Utilizadas</h2>
-    <p>El proyecto utiliza implementaciones propias de TDAs:</p>
-    <ul>
-        <li><b>Lista Simple Enlazada:</b> para almacenar hileras, drones, planes e instrucciones.</li>
-        <li><b>Cola (simulada con lista enlazada):</b> para manejar la secuencia de instrucciones de riego.</li>
-    </ul>
+        <div class="section">
+            <h2>Instrucciones</h2>
+            <ul>
+                <li>Carga de configuracion XML</li>
+                <li>Simulacion de planes de riego</li>
+                <li>Generacion de reportes HTML y XML</li>
+                <li>Visualizacion de estructuras de datos</li>
+            </ul>
+        </div>
 
-    <h2>Autores y Créditos</h2>
-    <p>Desarrollado por el estudiante como parte del Proyecto 2.</p>
 
-    <a href="/">⬅️ Volver al inicio</a>
+    </div>
 </body>
 </html>

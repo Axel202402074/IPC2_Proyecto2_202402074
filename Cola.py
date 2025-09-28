@@ -11,7 +11,7 @@ class Cola:
     def esta_vacia(self):
         return self.frente is None
 
-    def encolar(self, dato):
+    def push(self, dato):
         nuevo = Nodo(dato)
         if self.esta_vacia():
             self.frente = nuevo
@@ -21,7 +21,7 @@ class Cola:
             self.final = nuevo
         self.longitud += 1
 
-    def desencolar(self):
+    def pop(self):
         if self.esta_vacia():
             return None
         dato = self.frente.dato
@@ -48,6 +48,7 @@ class Cola:
             yield actual.dato
             actual = actual.siguiente
 
+#Graphviz
 
 def graficar_lista(lista, nombre_archivo="lista", titulo="Lista Simple Enlazada"):
     dot = Digraph(comment=titulo)

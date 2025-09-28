@@ -1,19 +1,43 @@
 from ListaSimpleEnlazada import ListaSimpleEnlazada
+from MapaDrones import MapaDrones, ConsumoDron
 
 
 class Plan_Riego:
     def __init__(self, nombre):
         self.nombre = nombre
         self.secuencia = ListaSimpleEnlazada()
+        self.secuencia_str = ""
 
     def agregar_instruccion(self, instruccion):
         self.secuencia.insertar(instruccion)
+
+    def ordenar_instrucciones(self):
+        if self.secuencia.longitud <= 1:
+            return
+        
+        cambio = True
+        while cambio:
+            cambio = False
+            actual = self.secuencia.primero
+            while actual and actual.siguiente:
+                if actual.dato.tiempo > actual.siguiente.dato.tiempo:
+                    temp = actual.dato
+                    actual.dato = actual.siguiente.dato
+                    actual.siguiente.dato = temp
+                    cambio = True
+                elif actual.dato.tiempo == actual.siguiente.dato.tiempo:
+                    if actual.dato.dron > actual.siguiente.dato.dron:
+                        temp = actual.dato
+                        actual.dato = actual.siguiente.dato
+                        actual.siguiente.dato = temp
+                        cambio = True
+                actual = actual.siguiente
 
     def calcular_resultados(self):
         tiempo_optimo = 0
         agua_total = 0.0
         fertilizante_total = 0.0
-        consumo_por_dron = {}
+        consumo_por_dron = MapaDrones()
 
         actual = self.secuencia.primero
         while actual:
@@ -22,20 +46,21 @@ class Plan_Riego:
             tiempo_optimo = max(tiempo_optimo, instruccion.tiempo)
 
             if instruccion.planta:
-                if instruccion.dron not in consumo_por_dron:
-                    consumo_por_dron[instruccion.dron] = {"agua": 0.0, "fertilizante": 0.0}
+                if not consumo_por_dron.contiene(instruccion.dron):
+                    consumo_por_dron.agregar(instruccion.dron, ConsumoDron())
 
                 accion_lower = instruccion.accion.lower()
                 
                 if "regar" in accion_lower:
+                    consumo = consumo_por_dron.obtener(instruccion.dron)
+                    
                     agua = instruccion.planta.litros_agua
                     agua_total += agua
-                    consumo_por_dron[instruccion.dron]["agua"] += agua
-                
-                if "fertilizar" in accion_lower:
+                    consumo.agua += agua
+                    
                     fertilizante = instruccion.planta.gramos_fertilizante
                     fertilizante_total += fertilizante
-                    consumo_por_dron[instruccion.dron]["fertilizante"] += fertilizante
+                    consumo.fertilizante += fertilizante
 
             actual = actual.siguiente
 
@@ -47,11 +72,11 @@ class Plan_Riego:
         }
 
     def obtener_instrucciones_en_tiempo(self, tiempo):
-        instrucciones = []
+        instrucciones = ListaSimpleEnlazada()
         actual = self.secuencia.primero
         while actual:
             if actual.dato.tiempo == tiempo:
-                instrucciones.append(actual.dato)
+                instrucciones.agregar(actual.dato)
             actual = actual.siguiente
         return instrucciones
 
