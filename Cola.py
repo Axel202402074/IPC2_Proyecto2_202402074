@@ -1,4 +1,5 @@
 from ListaSimpleEnlazada import Nodo
+from graphviz import Digraph
 
 class Cola:
     def __init__(self):
@@ -43,3 +44,41 @@ class Cola:
         while actual:
             print(actual.dato)
             actual = actual.siguiente
+
+
+
+
+def graficar_lista(lista, nombre_archivo="lista.png", titulo="Lista Simple Enlazada"):
+    dot = Digraph(comment=titulo)
+    dot.attr(rankdir="LR", size="8")
+
+    actual = lista.primero
+    idx = 0
+    while actual:
+        nodo_name = f"n{idx}"
+        dot.node(nodo_name, str(actual.dato))
+        if actual.siguiente:
+            dot.edge(nodo_name, f"n{idx+1}")
+        actual = actual.siguiente
+        idx += 1
+
+    dot.render(nombre_archivo, format="png", cleanup=True)
+    print(f"Gráfico generado: {nombre_archivo}.png")
+
+
+def graficar_cola(cola, nombre_archivo="cola.png", titulo="Cola"):
+    dot = Digraph(comment=titulo)
+    dot.attr(rankdir="LR", size="8")
+
+    actual = cola.frente
+    idx = 0
+    while actual:
+        nodo_name = f"n{idx}"
+        dot.node(nodo_name, str(actual.dato))
+        if actual.siguiente:
+            dot.edge(nodo_name, f"n{idx+1}")
+        actual = actual.siguiente
+        idx += 1
+
+    dot.render(nombre_archivo, format="png", cleanup=True)
+    print(f"Gráfico generado: {nombre_archivo}.png")

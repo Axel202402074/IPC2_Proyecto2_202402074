@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Invernaderos</title>
+</head>
+<body>
+    <h1>Sistema de Invernaderos</h1>
+    <form action="/cargar" method="post" enctype="multipart/form-data">
+        <p>Cargar archivo XML de entrada:</p>
+        <input type="file" name="archivo" required>
+        <button type="submit">Cargar</button>
+    </form>
+
+    {% if invernaderos %}
+    <h2>Seleccionar Invernadero y Plan</h2>
+    <form action="/ver_plan" method="get">
+        <label>Invernadero:</label>
+        <select name="invernadero">
+            {% set actual_inv = invernaderos.primero %}
+            {% while actual_inv %}
+                <option value="{{ actual_inv.dato.nombre }}">{{ actual_inv.dato.nombre }}</option>
+                {% set actual_inv = actual_inv.siguiente %}
+            {% endwhile %}
+        </select>
+
+        <label>Plan:</label>
+        <select name="plan">
+            {% set actual_plan = invernaderos.primero.dato.planes.primero %}
+            {% while actual_plan %}
+                <option value="{{ actual_plan.dato.nombre }}">{{ actual_plan.dato.nombre }}</option>
+                {% set actual_plan = actual_plan.siguiente %}
+            {% endwhile %}
+        </select>
+
+        <button type="submit">Ver Reporte HTML</button>
+    </form>
+    {% endif %}
+
+    <h2>Otras opciones</h2>
+    <ul>
+        <li><a href="/generar_xml">Generar salida XML</a></li>
+        <li><a href="/graficar">Graficar drones</a></li>
+        <li><a href="/ayuda">Ayuda</a></li>
+    </ul>
+</body>
+</html>

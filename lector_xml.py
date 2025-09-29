@@ -4,6 +4,7 @@ from Hilera import Hilera
 from Planta import Planta
 from Dron import Dron
 from Riego import Plan_Riego
+from Instruccion import Instruccion
 from ListaSimpleEnlazada import ListaSimpleEnlazada
 
 def cargar_configuracion(ruta_xml):
@@ -12,54 +13,65 @@ def cargar_configuracion(ruta_xml):
 
     invernaderos = ListaSimpleEnlazada()
 
-    # Recorrer lista de invernaderos
-    for inv_elem in root.find("listaInvernaderos"):
+    for inv_elem in root.findall("invernadero"):
         nombre_inv = inv_elem.get("nombre")
-        invernadero = Invernadero(nombre_inv)
+        inv = Invernadero(nombre_inv)
 
-        # Leer número de hileras y plantas por hilera
-        num_hileras = int(inv_elem.find("numeroHileras").text)
-        plantas_x_hilera = int(inv_elem.find("plantasXhilera").text)
+        # Hileras
+        for hilera_elem in inv_elem.findall("hilera"):
+            numero = hilera_elem.get("numero")
+            hilera = Hilera(numero)
 
-        # Crear hileras
-        for i in range(1, num_hileras + 1):
-            hilera = Hilera(i)
-            invernadero.hileras.agregar(hilera)
+            for planta_elem in hilera_elem.findall("planta"):
+                posicion = planta_elem.get("posicion")
+                litros = float(planta_elem.get("litrosAgua"))
+                gramos = float(planta_elem.get("gramosFertilizante"))
+                tipo = planta_elem.get("tipo")
+                planta = Planta(numero, posicion, litros, gramos, tipo)
+                hilera.agregar_planta(planta)
 
-        # Leer plantas
-        for planta_elem in inv_elem.find("listaPlantas"):
-            hilera = int(planta_elem.get("hilera"))
-            posicion = int(planta_elem.get("posicion"))
-            litros = int(planta_elem.get("litrosAgua"))
-            gramos = int(planta_elem.get("gramosFertilizante"))
-            tipo = planta_elem.text.strip()
+            inv.hileras.insertar(hilera)
 
-            planta = Planta(hilera, posicion, litros, gramos, tipo)
+        # Drones
+        for dron_elem in inv_elem.findall("dron"):
+            id_dron = dron_elem.get("id")
+            nombre_dron = dron_elem.get("nombre")
+            hilera_asignada = dron_elem.get("hilera")
+            dron = Dron(id_dron, nombre_dron, hilera_asignada)
+            inv.drones.insertar(dron)
 
-            # Agregar a la hilera correspondiente
-            hilera_obj = invernadero.hileras.obtener(hilera - 1)
-            hilera_obj.agregar_planta(planta)
-
-        # Leer asignación de drones
-        for dron_elem in inv_elem.find("asignacionDrones"):
-            id_dron = int(dron_elem.get("id"))
-            hilera = int(dron_elem.get("hilera"))
-            nombre = f"DR{id_dron:02d}"
-            dron = Dron(id_dron, nombre, hilera)
-            invernadero.drones.agregar(dron)
-
-        # Leer planes de riego
-        for plan_elem in inv_elem.find("planesRiego"):
+        # Planes de riego
+        for plan_elem in inv_elem.findall("planRiego"):
             nombre_plan = plan_elem.get("nombre")
-            secuencia = plan_elem.text.strip().split(", ")
             plan = Plan_Riego(nombre_plan)
 
-            for instruccion in secuencia:
+            tiempo = 1
+            for instr_elem in plan_elem.findall("instruccion"):
+                dron_nombre = instr_elem.get("dron")
+                accion = instr_elem.get("accion")
+                hilera = instr_elem.get("hilera")
+                posicion = instr_elem.get("posicion")
+
+                planta = None
+                if hilera and posicion:
+                    # Buscar planta en las hileras
+                    actual_hilera = inv.hileras.primero
+                    while actual_hilera:
+                        if actual_hilera.dato.numero == hilera:
+                            actual_planta = actual_hilera.dato.plantas.primero
+                            while actual_planta:
+                                if actual_planta.dato.posicion == posicion:
+                                    planta = actual_planta.dato
+                                    break
+                                actual_planta = actual_planta.siguiente
+                        actual_hilera = actual_hilera.siguiente
+
+                instruccion = Instruccion(tiempo, dron_nombre, accion, planta)
                 plan.agregar_instruccion(instruccion)
+                tiempo += 1
 
-            invernadero.planes.agregar(plan)
+            inv.planes.insertar(plan)
 
-        # Agregar invernadero a la lista general
-        invernaderos.agregar(invernadero)
+        invernaderos.insertar(inv)
 
     return invernaderos
