@@ -3,6 +3,7 @@ class Nodo:
         self.dato = dato
         self.siguiente = None
 
+
 class ListaSimpleEnlazada:
     def __init__(self):
         self.primero = None
@@ -19,6 +20,9 @@ class ListaSimpleEnlazada:
             actual.siguiente = nodo
         self.longitud += 1
 
+    def insertar(self, dato):
+        self.agregar(dato)
+
     def obtener(self, indice):
         if indice < 0 or indice >= self.longitud:
             return None
@@ -28,7 +32,6 @@ class ListaSimpleEnlazada:
         return actual.dato
 
     def buscar_indice(self, id_buscar):
-        # Busca el índice de un elemento por su id
         actual = self.primero
         indice = 0
         while actual:
@@ -39,7 +42,6 @@ class ListaSimpleEnlazada:
         return -1
     
     def recorrer(self):
-        # Recorre e imprime todos los datos
         actual = self.primero
         while actual:
             print(actual.dato)
@@ -60,4 +62,8 @@ class ListaSimpleEnlazada:
         self.longitud -= 1
         return eliminado
 
-
+    def __iter__(self):
+        actual = self.primero
+        while actual:
+            yield actual.dato
+            actual = actual.siguiente

@@ -5,42 +5,63 @@
 </head>
 <body>
     <h1>Sistema de Invernaderos</h1>
-    <form action="/cargar" method="post" enctype="multipart/form-data">
-        <p>Cargar archivo XML de entrada:</p>
-        <input type="file" name="archivo" required>
-        <button type="submit">Cargar</button>
-    </form>
+    
+    {% if not tiene_invernaderos %}
+        <form action="/cargar" method="post" enctype="multipart/form-data">
+            <label>Subir archivo XML de entrada:</label>
+            <input type="file" name="archivo" accept=".xml" required>
+            <button type="submit">Cargar</button>
+        </form>
+        <p>No hay invernaderos cargados. Por favor, sube un archivo XML.</p>
+    {% else %}
+        <h2>Seleccionar Invernadero</h2>
+        <form action="/" method="post">
+            <label>Invernadero:</label>
+            <select name="invernadero">
+                {% for inv in invernaderos %}
+                    <option value="{{ inv.nombre }}" {% if primer_inv and inv.nombre == primer_inv.nombre %}selected{% endif %}>{{ inv.nombre }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit">Seleccionar</button>
+        </form>
 
-    {% if invernaderos %}
-    <h2>Seleccionar Invernadero y Plan</h2>
-    <form action="/ver_plan" method="get">
-        <label>Invernadero:</label>
-        <select name="invernadero">
-            {% set actual_inv = invernaderos.primero %}
-            {% while actual_inv %}
-                <option value="{{ actual_inv.dato.nombre }}">{{ actual_inv.dato.nombre }}</option>
-                {% set actual_inv = actual_inv.siguiente %}
-            {% endwhile %}
-        </select>
+        <h2>Seleccionar Plan</h2>
+        <form action="/graficar_instrucciones" method="post">
+            <input type="hidden" name="invernadero" value="{{ primer_inv.nombre }}">
+            <label>Plan:</label>
+            <select name="plan">
+                {% if primer_inv and primer_inv.planes %}
+                    {% for plan in primer_inv.planes %}
+                        <option value="{{ plan.nombre }}">{{ plan.nombre }}</option>
+                    {% endfor %}
+                {% else %}
+                    <option value="">No hay planes</option>
+                {% endif %}
+            </select>
+            <label>Tiempo máximo (segundos):</label>
+            <input type="number" name="tiempo" value="3" min="1" required>
+            <button type="submit">Graficar instrucciones</button>
+        </form>
 
-        <label>Plan:</label>
-        <select name="plan">
-            {% set actual_plan = invernaderos.primero.dato.planes.primero %}
-            {% while actual_plan %}
-                <option value="{{ actual_plan.dato.nombre }}">{{ actual_plan.dato.nombre }}</option>
-                {% set actual_plan = actual_plan.siguiente %}
-            {% endwhile %}
-        </select>
-
-        <button type="submit">Ver Reporte HTML</button>
-    </form>
+        <h3>Invernaderos cargados:</h3>
+        <ul>
+        {% for inv in invernaderos %}
+            <li>
+                {{ inv.nombre }}
+                <ul>
+                    {% for plan in inv.planes %}
+                        <li>{{ plan.nombre }}</li>
+                    {% endfor %}
+                </ul>
+            </li>
+        {% endfor %}
+        </ul>
     {% endif %}
-
-    <h2>Otras opciones</h2>
+    <p>Debug: {% if invernaderos %} Lista enlazada cargada {% else %} No hay invernaderos {% endif %}</p>
     <ul>
-        <li><a href="/generar_xml">Generar salida XML</a></li>
-        <li><a href="/graficar">Graficar drones</a></li>
-        <li><a href="/ayuda">Ayuda</a></li>
+    {% for inv in invernaderos %}
+        <li>{{ inv.nombre }}</li>
+    {% endfor %}
     </ul>
 </body>
 </html>

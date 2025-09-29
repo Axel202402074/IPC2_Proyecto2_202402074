@@ -13,16 +13,16 @@ def cargar_configuracion(ruta_xml):
 
     invernaderos = ListaSimpleEnlazada()
 
-    for inv_elem in root.findall("invernadero"):
+    for inv_elem in root.findall("Invernadero"):
         nombre_inv = inv_elem.get("nombre")
         inv = Invernadero(nombre_inv)
 
         # Hileras
-        for hilera_elem in inv_elem.findall("hilera"):
+        for hilera_elem in inv_elem.findall("Hilera"):
             numero = hilera_elem.get("numero")
             hilera = Hilera(numero)
 
-            for planta_elem in hilera_elem.findall("planta"):
+            for planta_elem in hilera_elem.findall("Planta"):
                 posicion = planta_elem.get("posicion")
                 litros = float(planta_elem.get("litrosAgua"))
                 gramos = float(planta_elem.get("gramosFertilizante"))
@@ -33,7 +33,7 @@ def cargar_configuracion(ruta_xml):
             inv.hileras.insertar(hilera)
 
         # Drones
-        for dron_elem in inv_elem.findall("dron"):
+        for dron_elem in inv_elem.findall("Dron"):
             id_dron = dron_elem.get("id")
             nombre_dron = dron_elem.get("nombre")
             hilera_asignada = dron_elem.get("hilera")
@@ -41,12 +41,12 @@ def cargar_configuracion(ruta_xml):
             inv.drones.insertar(dron)
 
         # Planes de riego
-        for plan_elem in inv_elem.findall("planRiego"):
+        for plan_elem in inv_elem.findall("Riego"):
             nombre_plan = plan_elem.get("nombre")
             plan = Plan_Riego(nombre_plan)
 
             tiempo = 1
-            for instr_elem in plan_elem.findall("instruccion"):
+            for instr_elem in plan_elem.findall("Instruccion"):
                 dron_nombre = instr_elem.get("dron")
                 accion = instr_elem.get("accion")
                 hilera = instr_elem.get("hilera")
